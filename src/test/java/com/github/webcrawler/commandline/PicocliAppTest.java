@@ -8,9 +8,6 @@ import picocli.CommandLine;
 public class PicocliAppTest {
 
   @Test
-  public void translateAndWriteMarkdownReport() {}
-
-  @Test
   public void usageMessage() {
     CommandLine cli = new CommandLine(new PicocliApp());
 
