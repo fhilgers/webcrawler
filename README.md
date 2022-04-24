@@ -1,5 +1,8 @@
 # Build, Test and Run
 
+[![codecov](https://codecov.io/gh/fhilgers/webcrawler/branch/main/graph/badge.svg?token=GS2ZG1J24T)](https://codecov.io/gh/fhilgers/webcrawler)
+[![DeepSource](https://deepsource.io/gh/fhilgers/webcrawler.svg/?label=active+issues&show_trend=true&token=n730zCzcQNFMGZRKJAfE__Ha)](https://deepsource.io/gh/fhilgers/webcrawler/?ref=repository-badge)
+
 See `gradle tasks` for a list of available tasks. Most notably:
 
 - `gradle build` for building
