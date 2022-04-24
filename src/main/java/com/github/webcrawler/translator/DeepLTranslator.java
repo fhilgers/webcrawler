@@ -67,7 +67,7 @@ public record DeepLTranslator(
           .getKey();
     }
 
-    private Language getDominantSourceLanguage() {
+    public Language getDominantSourceLanguage() {
       return getElementWithHighestOccurrence(getSourceLanguages());
     }
 
