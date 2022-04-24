@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'application'
+    id 'com.diffplug.spotless' version '6.4.2'
 }
 
 group 'com.github'
@@ -25,4 +26,10 @@ test {
 
 application {
     mainClass = 'com.github.webcrawler.Main'
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+    }
 }
