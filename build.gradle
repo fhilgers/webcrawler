@@ -3,6 +3,7 @@ plugins {
     id 'idea'
     id 'application'
     id 'com.diffplug.spotless' version '6.4.2'
+    id 'jacoco'
 }
 
 group 'com.github'
@@ -22,6 +23,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 application {
