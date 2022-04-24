@@ -46,3 +46,16 @@ spotless {
         googleJavaFormat()
     }
 }
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Main-Class": "com.github.webcrawler.Main"
+        )
+    }
+    from { configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } } {
+        exclude 'META-INF', 'META-INF/**'
+    }
+}
