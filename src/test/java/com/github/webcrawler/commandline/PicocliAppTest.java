@@ -18,16 +18,20 @@ public class PicocliAppTest {
         """
         Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
                        [-o=<outputFilePath>] URL
-              URL                  url for the webpage to crawl
-          -d, --depth=<maxDepth>   depth to crawl recursively
+              URL                  The URL for the webpage to crawl
+          -d, --depth=<maxDepth>   The depth of webpages to crawl recursively (default:
+                                     2)
           -h, --help               Show this help message and exit.
           -k, --auth-key=<deeplAuthKey>
-                                   deepl api auth_key
+                                   The auth key for the DeepL API.
           -l, --language=<targetLanguage>
-                                   language to translate to
+                                   The language to translate the headings to (default:
+                                     EN)
           -o, --output-file=<outputFilePath>
-                                   path to the generated markdown, '-' for stdout
-          -p, --pro                use deepl pro version
+                                   The path to the generated markdown report. Use '-'
+                                     to print to console (default: -)
+          -p, --pro                Whether to use DeepL pro version or not (default:
+                                     false)
           -V, --version            Print version information and exit.
         """;
 
