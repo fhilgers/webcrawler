@@ -18,6 +18,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
+      - name: Report results to CodeCov
+        uses: codecov/codecov-action@v2
+        with:
+          files: build/reports/jacoco/test/jacocoTestReport.xml
+          verbose: true 
       - name: Report results to DeepSource
         uses: deepsourcelabs/test-coverage-action@master
         with:
