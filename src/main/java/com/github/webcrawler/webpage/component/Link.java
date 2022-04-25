@@ -5,9 +5,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
+/**
+ * A stripped version of a URL without query and fragment.
+ *
+ * @param scheme The protocol of a URL (example: https).
+ * @param host The host of a URL (example: www.google.com).
+ * @param path The path of a URL (example: /index.html).
+ * @param isBroken Whether the URL is reachable.
+ */
 public record Link(String scheme, String host, String path, boolean isBroken)
     implements Markdownable {
 
+  public static final String MARKDOWN_TEMPLATE = """
+      <br>%s link to <a>%s</a>
+      """;
+
+  /** The template for converting a broken link to Markdown */
+  public static final String BROKEN_MARKDOWN_TEMPLATE =
+      """
+      <br>%s broken link <a>%s</a>
+      """;
+
+  /**
+   * Creates a new Link which is not broken.
+   *
+   * @param scheme The protocol of a URL (example: https).
+   * @param host The host of a URL (example: www.google.com).
+   * @param path The path of a URL (example: /index.html).
+   */
   public Link(String scheme, String host, String path) {
     this(scheme, host, path, false);
   }
@@ -20,6 +45,12 @@ public record Link(String scheme, String host, String path, boolean isBroken)
     }
   }
 
+  /**
+   * Create a new Link from an url.
+   *
+   * @param urlString The url to strip and convert to a Link.
+   * @return A new Link representing the stripped URL.
+   */
   public static Link fromString(String urlString) {
     try {
       URL url = new URL(urlString);
@@ -29,22 +60,24 @@ public record Link(String scheme, String host, String path, boolean isBroken)
     }
   }
 
+  /**
+   * Similar to the toString() methods, but for Markdown.
+   *
+   * @return The Object as Markdown string.
+   */
   @Override
   public String toMarkdown() {
     return toMarkdown(0);
   }
 
-  static final String MARKDOWN_TEMPLATE = """
-      <br>%s link to <a>%s</a>
-      """;
-
-  static final String BROKEN_MARKDOWN_TEMPLATE = """
-      <br>%s broken link <a>%s</a>
-      """;
-
+  /**
+   * Similar to the toString() methods, but for Markdown.
+   *
+   * @param nestingLevel The indentation of the generated strings.
+   * @return The Object as Markdown string.
+   */
   @Override
   public String toMarkdown(int nestingLevel) {
-
     if (isBroken) {
       return BROKEN_MARKDOWN_TEMPLATE.formatted(new AsciiArrow(nestingLevel), this);
     } else {

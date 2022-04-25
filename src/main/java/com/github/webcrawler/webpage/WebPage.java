@@ -10,6 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * WebPage recursively crawls Documents from a Provider, extracts Links and Headings and checks
+ * whether Links are broken or not. It also provides a way to recursively translate all Headings
+ * with a Translator.
+ */
 public class WebPage implements Markdownable {
 
   private final Link link;
@@ -110,6 +115,13 @@ public class WebPage implements Markdownable {
     children.forEach(child -> child.subdivideHeadings(aggegatedHeadings));
   }
 
+  /**
+   * Aggregates the headings of itself and its children, translates them and updates all the
+   * headings.
+   *
+   * @param translator The translator to use.
+   * @throws IOException If error occurs translating.
+   */
   public void translate(Translator translator) throws IOException {
     List<Heading> allHeadings = aggregateHeadings();
     List<String> allHeadingTexts = allHeadings.stream().map(Heading::text).toList();
@@ -154,6 +166,11 @@ public class WebPage implements Markdownable {
     return metadata.toMarkdown(depth);
   }
 
+  /**
+   * Similar to the toString() methods, but for Markdown.
+   *
+   * @return The WebPage as Markdown string.
+   */
   @Override
   public String toMarkdown() {
 
@@ -167,6 +184,12 @@ public class WebPage implements Markdownable {
         .collect(Collectors.joining("\n\n"));
   }
 
+  /**
+   * Similar to the toString() methods, but for Markdown.
+   *
+   * @param nestingLevel The indentation of the generated strings.
+   * @return The WebPage as Markdown string.
+   */
   @Override
   public String toMarkdown(int nestingLevel) {
     return toMarkdown();

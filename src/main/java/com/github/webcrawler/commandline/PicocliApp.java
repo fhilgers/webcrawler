@@ -60,6 +60,12 @@ public class PicocliApp implements App, Callable<Integer> {
     }
   }
 
+  /**
+   * Crawl Webpages recursively, translate the headings and write a Markdown report.
+   *
+   * @return The exit code of the application.
+   * @throws IOException If error occurs either fetching a Webpage or translating its headings.
+   */
   @Override
   public Integer call() throws IOException {
 
@@ -71,6 +77,12 @@ public class PicocliApp implements App, Callable<Integer> {
     return 0;
   }
 
+  /**
+   * Parse commandline arguments and run the application.
+   *
+   * @param args The commandline arguments.
+   * @return The exit code of the application.
+   */
   public int execute(String[] args) {
     return new CommandLine(this).execute(args);
   }

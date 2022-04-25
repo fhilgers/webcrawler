@@ -7,10 +7,22 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import okhttp3.*;
 
+/**
+ * @param client The OkHttpClient to use for communication with the api.
+ * @param targetLanguage The language to which this Translator should translate.
+ * @param authKey The auth_key for the DeepL api.
+ * @param apiUrl The api url for the DeepL api.
+ */
 public record DeepLTranslator(
     OkHttpClient client, Language targetLanguage, String authKey, String apiUrl)
     implements Translator {
 
+  /**
+   * @param client client The OkHttpClient to use for communication with the api.
+   * @param targetLanguage The language to which this Translator should translate.
+   * @param authKey The auth_key for the DeepL api.
+   * @param isPro Whether to use the pro api or the free api.
+   */
   public DeepLTranslator(
       OkHttpClient client, String targetLanguage, String authKey, boolean isPro) {
     this(
@@ -20,6 +32,13 @@ public record DeepLTranslator(
         isPro ? DEEPL_PRO_API_URL : DEEPL_FREE_API_URL);
   }
 
+  /**
+   * Creates a new Translator with default OkHttpClient.
+   *
+   * @param targetLanguage The language to which this Translator should translate.
+   * @param authKey The auth_key for the DeepL api.
+   * @param isPro Whether to use the pro api or the free api.
+   */
   public DeepLTranslator(String targetLanguage, String authKey, boolean isPro) {
     this(new OkHttpClient(), targetLanguage, authKey, isPro);
   }
@@ -27,6 +46,10 @@ public record DeepLTranslator(
   static final String DEEPL_FREE_API_URL = "https://api-free.deepl.com/v2/translate";
   static final String DEEPL_PRO_API_URL = "https://api.deepl.com/v2/translate";
 
+  /**
+   * JsonTranslations handles the DeepL api result which is a List of json encoded JsonTranslation
+   * Objects.
+   */
   public static final class JsonTranslations {
     private List<JsonTranslation> translations;
 
@@ -34,6 +57,13 @@ public record DeepLTranslator(
       this.translations = translations;
     }
 
+    /**
+     * Creates a JsonTranslations Object from language and a List of texts.
+     *
+     * @param language The language to set for each JsonTranslation.
+     * @param texts The texts to set for the JsonTranslations.
+     * @return The JsonTranslations Object.
+     */
     public static JsonTranslations fromLanguageAndTexts(Language language, List<String> texts) {
       String languageTag = language.tag;
       List<JsonTranslation> translations =
@@ -42,14 +72,24 @@ public record DeepLTranslator(
       return new JsonTranslations(translations);
     }
 
+    /** @return The serialized JsonTranslations. */
     public String toJsonString() {
       return new Gson().toJson(this);
     }
 
+    /**
+     * @param json Json string containing translations.
+     * @return The deserialized json String.
+     */
     public static JsonTranslations fromJsonString(String json) {
       return new Gson().fromJson(json, JsonTranslations.class);
     }
 
+    /**
+     * Create a list of all detected source languages.
+     *
+     * @return The list of source languages.
+     */
     public List<Language> getSourceLanguages() {
       return translations.stream()
           .map(t -> t.detected_source_language)
@@ -57,6 +97,11 @@ public record DeepLTranslator(
           .toList();
     }
 
+    /**
+     * @param collection The collection to analyze.
+     * @param <T> The type of objects in the collection.
+     * @return The object with the highest occurance.
+     */
     private static <T> T getElementWithHighestOccurrence(Collection<T> collection) {
       return collection.stream()
           .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
@@ -67,15 +112,26 @@ public record DeepLTranslator(
           .getKey();
     }
 
+    /**
+     * Get the language with the highest occurrence of all detected source languages.
+     *
+     * @return The language with the highest occurrence.
+     */
     public Language getDominantSourceLanguage() {
       return getElementWithHighestOccurrence(getSourceLanguages());
     }
 
+    /**
+     * Get the list of translated texts.
+     *
+     * @return The list of translated texts.
+     */
     public List<String> getTranslatedTexts() {
       return translations.stream().map(t -> t.text).toList();
     }
   }
 
+  /** JsonTranslations is used to deserialize a single translation response of the api. */
   public static final class JsonTranslation {
     private String detected_source_language;
     private String text;
@@ -143,6 +199,13 @@ public record DeepLTranslator(
     return JsonTranslations.fromJsonString(body.string());
   }
 
+  /**
+   * Translate a list of texts with the DeepL api.
+   *
+   * @param texts The texts to translate.
+   * @return The Result containing source language, target language and the translations.
+   * @throws IOException If errors occur on DeepL api requests.
+   */
   @Override
   public Result translate(List<String> texts) throws IOException {
     if (texts == null || texts.size() == 0)

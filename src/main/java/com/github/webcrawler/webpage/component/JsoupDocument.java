@@ -6,11 +6,22 @@ import java.util.stream.Collectors;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * A facade to the Jsoup Document implementation which provides convenient access to Heading and
+ * Link elements.
+ *
+ * @param bareDocument The Jsoup Document Node to wrap.
+ */
 public record JsoupDocument(org.jsoup.nodes.Document bareDocument) implements Document {
 
-  private static final String HEADING_CSS_QUERY = "h1, h2, h3, h4, h5, h6";
-  private static final String LINK_CSS_QUERY = "a[href]";
+  public static final String HEADING_CSS_QUERY = "h1, h2, h3, h4, h5, h6";
+  public static final String LINK_CSS_QUERY = "a[href]";
 
+  /**
+   * Get all headings from a Jsoup Document Node and convert them to a List of Heading objects.
+   *
+   * @return The List of Headings objects.
+   */
   @Override
   public List<Heading> getHeadings() {
     return getHeadingElements().stream()
@@ -18,6 +29,11 @@ public record JsoupDocument(org.jsoup.nodes.Document bareDocument) implements Do
         .collect(Collectors.toList());
   }
 
+  /**
+   * Get all headings from a Jsoup Document Node and convert them to a List of Links.
+   *
+   * @return The List of Links.
+   */
   @Override
   public List<Link> getLinks() {
     return getLinkElements().stream()
