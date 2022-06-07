@@ -25,7 +25,8 @@ public enum Language {
   SLOVAK("SK"),
   SLOVENIAN("SL"),
   SWEDISH("SV"),
-  CHINESE("ZH");
+  CHINESE("ZH"),
+  UNKNOWN("UNKNOWN");
 
   final String tag;
 
@@ -48,7 +49,11 @@ public enum Language {
       }
     }
 
-    return Language.valueOf(uppercaseNameOrTag);
+    try {
+      return Language.valueOf(uppercaseNameOrTag);
+    } catch (Exception e) {
+      return UNKNOWN;
+    }
   }
 
   /** @return The lowercase language name. */
