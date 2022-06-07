@@ -1,11 +1,17 @@
 package com.github.webcrawler.webpage;
 
 import com.github.webcrawler.translator.Translator;
+import com.github.webcrawler.webpage.provider.DocumentProvider;
 
 public class TranslatedState extends State {
 
   public TranslatedState(WebPage webPage) {
     super(webPage);
+  }
+
+  @Override
+  void fetch(DocumentProvider provider) {
+    throw new IllegalStateException("Webpage is already fetched.");
   }
 
   @Override

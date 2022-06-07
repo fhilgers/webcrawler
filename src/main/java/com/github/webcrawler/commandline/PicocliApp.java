@@ -63,6 +63,7 @@ public class PicocliApp implements App, Callable<Integer> {
         .forEach(
             webPage -> {
               try {
+                webPage.fetch();
                 webPage.analyze();
                 webPage.translate(translator);
               } catch (IOException e) {

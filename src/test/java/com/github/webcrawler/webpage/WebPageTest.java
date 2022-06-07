@@ -66,6 +66,7 @@ class WebPageTest {
             5,
             new JsoupLocalDocumentProvider());
 
+    webPage.fetch();
     webPage.analyze();
     webPage.translate(new DummyTranslator());
     String generatedMarkdown = webPage.toMarkdown();
@@ -81,6 +82,7 @@ class WebPageTest {
             0,
             new JsoupLocalDocumentProvider());
 
+    webPage.fetch();
     webPage.analyze();
     String generatedMarkdown = webPage.toMarkdown();
 
@@ -95,6 +97,7 @@ class WebPageTest {
             5,
             new JsoupLocalDocumentProvider());
 
+    webPage.fetch();
     webPage.analyze();
     String generatedMarkdown = webPage.toMarkdown();
 

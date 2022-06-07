@@ -51,13 +51,19 @@ public class WebPage implements Markdownable {
   }
 
   /**
-   * Fetches the Website and then extracts the headings and the links present. Then recursively
-   * visit the links up to the depth configured in the WebPage object and analyze them as well.
+   * Fetches the Website.
    *
-   * @throws IOException If an error occurs fetching the website itself, children which could not be
-   *     fetched are recorded as broken link.
+   * @throws IOException If an error occurs fetching the website itself.
    */
-  public void analyze() throws IOException {
+  public void fetch() throws IOException {
+    this.state.fetch(provider);
+  }
+
+  /**
+   * Extracts the headings and the links present. Then recursively visit the links up to the depth
+   * configured in the WebPage object and analyze them as well.
+   */
+  public void analyze() {
     this.state.analyze();
   }
 
@@ -79,15 +85,7 @@ public class WebPage implements Markdownable {
    */
   @Override
   public String toMarkdown() {
-
-    String markdownMetadata = metadataToMarkdown();
-    String markdownHeaders = headingsToMarkdown();
-    String markdownBrokenLinks = brokenLinksToMarkdown();
-    String markdownChildren = childrenToMarkdown();
-
-    return Stream.of(markdownMetadata, markdownHeaders, markdownBrokenLinks, markdownChildren)
-        .filter(Predicate.not(String::isBlank))
-        .collect(Collectors.joining("\n\n"));
+    return this.state.toMarkdown();
   }
 
   /**
@@ -101,28 +99,32 @@ public class WebPage implements Markdownable {
     return toMarkdown();
   }
 
-  public int getDepth() {
+  Link getLink() {
+    return link;
+  }
+
+  int getDepth() {
     return depth;
   }
 
-  public int getMaxDepth() {
+  int getMaxDepth() {
     return maxDepth;
   }
 
-  public void setSourceLanguage(String sourceLanguage) {
+  public void setDocument(Document document) {
+    this.document = document;
+  }
+
+  void setSourceLanguage(String sourceLanguage) {
     this.sourceLanguage = sourceLanguage;
   }
 
-  public void setTargetLanguage(String targetLanguage) {
+  void setTargetLanguage(String targetLanguage) {
     this.targetLanguage = targetLanguage;
   }
 
   void changeState(State state) {
     this.state = state;
-  }
-
-  void loadHtmlDocument() throws IOException {
-    this.document = provider.getDocument(this.link.toString());
   }
 
   void extractHeadings() {
@@ -148,6 +150,7 @@ public class WebPage implements Markdownable {
     for (Link link : this.links) {
       try {
         WebPage child = new WebPage(link, seenLinks, maxDepth, provider, depth + 1);
+        child.fetch();
         child.analyze();
         children.add(child);
       } catch (IOException e) {
@@ -182,19 +185,19 @@ public class WebPage implements Markdownable {
         .collect(Collectors.joining(delimiter));
   }
 
-  private String headingsToMarkdown() {
+  String headingsToMarkdown() {
     return collectionToMarkdown(headings, depth, "\n");
   }
 
-  private String brokenLinksToMarkdown() {
+  String brokenLinksToMarkdown() {
     return collectionToMarkdown(brokenLinks, depth + 1, "\n");
   }
 
-  private String childrenToMarkdown() {
+  String childrenToMarkdown() {
     return collectionToMarkdown(children, depth + 1, "\n\n<br>\n\n");
   }
 
-  private String metadataToMarkdown() {
+  String metadataToMarkdown() {
     Metadata metadata = new Metadata(link, maxDepth, sourceLanguage, targetLanguage);
 
     return metadata.toMarkdown(depth);
