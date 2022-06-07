@@ -131,6 +131,7 @@ public class DeepLTranslatorTest {
     when(mockHttpClient.newCall(argThat(requestValidator::validate))).thenReturn(mockCall);
     when(mockCall.execute()).thenReturn(mockResponse);
     when(mockResponse.body()).thenReturn(fakeResponseBody);
+    when(mockResponse.isSuccessful()).thenReturn(true);
   }
 
   private void validateTranslatorResult(
@@ -189,7 +190,7 @@ public class DeepLTranslatorTest {
     when(mockResponse.code()).thenReturn(403);
 
     assertThrows(
-        IOException.class,
+        TranslationException.class,
         () -> translator.translate(List.of("element")),
         "forbidden: invalid auth_key");
   }
