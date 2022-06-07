@@ -42,6 +42,7 @@ public class DefaultApp implements App {
 
     } catch (CommandlineException ex) {
       System.err.println(ex.getMessage());
+      System.err.println(commandLine.getUsageHelp());
       return 1;
     } catch (Exception ex) {
       ex.printStackTrace();
