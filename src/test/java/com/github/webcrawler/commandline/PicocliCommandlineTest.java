@@ -1,16 +1,16 @@
 package com.github.webcrawler.commandline;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-public class PicocliCommandlineTest {
+class PicocliCommandlineTest {
+
+  CommandLine commandLine = new PicocliCommandline();
 
   @Test
-  public void usageMessage() {
-    CommandLine cli = new PicocliCommandline();
-
-    String expectedUsageMessage =
+  void getUsageHelp() {
+    String expectedUsageHelp =
         """
         Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
                        [-o=<outputFilePath>] URLS...
@@ -31,8 +31,67 @@ public class PicocliCommandlineTest {
           -V, --version            Print version information and exit.
         """;
 
-    String usageMessage = cli.getUsageHelp();
+    String actualUsageHelp = commandLine.getUsageHelp();
 
-    assertEquals(expectedUsageMessage, usageMessage);
+    assertEquals(expectedUsageHelp, actualUsageHelp);
+  }
+
+  @Test
+  void getVersionHelp() {
+    String expectedVersionHelp = """
+    2.0
+    """;
+
+    String actualVersionHelp = commandLine.getVersionHelp();
+
+    assertEquals(expectedVersionHelp, actualVersionHelp);
+  }
+
+  @Test
+  void isUsageHelpRequestedShort() {
+    commandLine.parseArgs(new String[] {"-h"});
+
+    assertTrue(commandLine.isUsageHelpRequested());
+  }
+
+  @Test
+  void isUsageHelpRequestedLong() {
+    commandLine.parseArgs(new String[] {"--help"});
+
+    assertTrue(commandLine.isUsageHelpRequested());
+  }
+
+  @Test
+  void isVersionHelpRequestedShort() {
+    commandLine.parseArgs(new String[] {"-V"});
+
+    assertTrue(commandLine.isVersionHelpRequested());
+  }
+
+  @Test
+  void isVersionHelpRequestedLong() {
+    commandLine.parseArgs(new String[] {"--version"});
+
+    assertTrue(commandLine.isVersionHelpRequested());
+  }
+
+  @Test
+  void parseArgsValid() {
+    Arguments arguments = commandLine.parseArgs(new String[] {"--auth-key=xyz", "url1", "url2"});
+
+    assertEquals("xyz", arguments.getDeeplAuthKey());
+    assertEquals(2, arguments.getUrls().size());
+    assertEquals("url1", arguments.getUrls().get(0));
+    assertEquals("url2", arguments.getUrls().get(1));
+  }
+
+  @Test
+  void parseArgsInvalid() {
+    Throwable t =
+        assertThrows(CommandlineException.class, () -> commandLine.parseArgs(new String[] {}));
+
+    assertEquals(
+        "picocli.CommandLine$MissingParameterException: Missing required options and parameters: '--auth-key=<deeplAuthKey>', 'URLS'",
+        t.getMessage());
   }
 }

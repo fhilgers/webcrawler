@@ -3,8 +3,9 @@ package com.github.webcrawler.commandline;
 import java.util.List;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "crawler", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "crawler", version = "2.0", mixinStandardHelpOptions = true)
 public class PicocliArguments implements Arguments {
+
   @CommandLine.Parameters(
       paramLabel = "URLS",
       arity = "1..*",
