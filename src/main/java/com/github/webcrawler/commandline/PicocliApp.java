@@ -7,7 +7,9 @@ import com.github.webcrawler.webpage.provider.JsoupDocumentProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -15,8 +17,8 @@ import picocli.CommandLine.Parameters;
 @CommandLine.Command(name = "crawler", mixinStandardHelpOptions = true)
 public class PicocliApp implements App, Callable<Integer> {
 
-  @Parameters(paramLabel = "URL", description = "The URL for the webpage to crawl")
-  private String url;
+  @Parameters(paramLabel = "URLS", arity = "1..*", description = "The URL for the webpage to crawl")
+  private List<String> urls;
 
   @Option(
       names = {"-d", "--depth"},
@@ -49,10 +51,21 @@ public class PicocliApp implements App, Callable<Integer> {
           "The path to the generated markdown report. Use '-' to print to console (default: ${DEFAULT-VALUE})")
   private String outputFilePath;
 
-  private void translateAndWriteMarkdownReport(WebPage webPage, Translator translator)
+  private void translateAndWriteMarkdownReports(List<WebPage> webPages, Translator translator)
       throws IOException {
-    webPage.translate(translator);
-    String generatedMarkdown = webPage.toMarkdown();
+
+    webPages.parallelStream()
+        .forEach(
+            webPage -> {
+              try {
+                webPage.translate(translator);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
+
+    String generatedMarkdown =
+        webPages.stream().map(WebPage::toMarkdown).collect(Collectors.joining("\n\n\n"));
 
     if (outputFilePath.equals("-")) System.out.println(generatedMarkdown);
     else {
@@ -69,10 +82,20 @@ public class PicocliApp implements App, Callable<Integer> {
   @Override
   public Integer call() throws IOException {
 
-    WebPage webPage = new WebPage(url, maxDepth, new JsoupDocumentProvider());
+    List<WebPage> webPages =
+        urls.parallelStream()
+            .map(
+                url -> {
+                  try {
+                    return new WebPage(url, maxDepth, new JsoupDocumentProvider());
+                  } catch (IOException e) {
+                    throw new RuntimeException(e);
+                  }
+                })
+            .toList();
     Translator translator = new DeepLTranslator(targetLanguage, deeplAuthKey, deeplIsPro);
 
-    translateAndWriteMarkdownReport(webPage, translator);
+    translateAndWriteMarkdownReports(webPages, translator);
 
     return 0;
   }

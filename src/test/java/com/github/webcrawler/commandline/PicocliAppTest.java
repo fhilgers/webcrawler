@@ -14,8 +14,8 @@ public class PicocliAppTest {
     String expectedUsageMessage =
         """
         Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
-                       [-o=<outputFilePath>] URL
-              URL                  The URL for the webpage to crawl
+                       [-o=<outputFilePath>] URLS...
+              URLS...              The URL for the webpage to crawl
           -d, --depth=<maxDepth>   The depth of webpages to crawl recursively (default:
                                      2)
           -h, --help               Show this help message and exit.
