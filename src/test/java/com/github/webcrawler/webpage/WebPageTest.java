@@ -66,6 +66,7 @@ class WebPageTest {
             5,
             new JsoupLocalDocumentProvider());
 
+    webPage.analyze();
     webPage.translate(new DummyTranslator());
     String generatedMarkdown = webPage.toMarkdown();
 
@@ -80,6 +81,7 @@ class WebPageTest {
             0,
             new JsoupLocalDocumentProvider());
 
+    webPage.analyze();
     String generatedMarkdown = webPage.toMarkdown();
 
     assertEquals(EXPECTED_MARKDOWN_WITHOUT_CHILDREN, generatedMarkdown);
@@ -93,6 +95,7 @@ class WebPageTest {
             5,
             new JsoupLocalDocumentProvider());
 
+    webPage.analyze();
     String generatedMarkdown = webPage.toMarkdown();
 
     assertEquals(EXPECTED_MARKDOWN_WITH_CHILDREN, generatedMarkdown);
