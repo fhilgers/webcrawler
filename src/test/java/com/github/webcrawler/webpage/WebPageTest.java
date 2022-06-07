@@ -64,11 +64,12 @@ class WebPageTest {
         new WebPage(
             "https://testpage/10-three-child-links-with-headings-and-broken.html",
             5,
-            new JsoupLocalDocumentProvider());
+            new JsoupLocalDocumentProvider(),
+            new DummyTranslator());
 
     webPage.fetch();
     webPage.analyze();
-    webPage.translate(new DummyTranslator());
+    webPage.translate();
     String generatedMarkdown = webPage.toMarkdown();
 
     assertEquals(EXPECTED_TRANSLATED_MARKDOWN_WITH_CHILDREN, generatedMarkdown);
@@ -80,7 +81,8 @@ class WebPageTest {
         new WebPage(
             "https://testpage/10-three-child-links-with-headings-and-broken.html",
             0,
-            new JsoupLocalDocumentProvider());
+            new JsoupLocalDocumentProvider(),
+            new DummyTranslator());
 
     webPage.fetch();
     webPage.analyze();
@@ -95,7 +97,8 @@ class WebPageTest {
         new WebPage(
             "https://testpage/10-three-child-links-with-headings-and-broken.html",
             5,
-            new JsoupLocalDocumentProvider());
+            new JsoupLocalDocumentProvider(),
+            new DummyTranslator());
 
     webPage.fetch();
     webPage.analyze();

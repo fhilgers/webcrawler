@@ -1,6 +1,5 @@
 package com.github.webcrawler.webpage;
 
-import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.provider.DocumentProvider;
 
 public class TranslatedState extends State {
@@ -20,7 +19,7 @@ public class TranslatedState extends State {
   }
 
   @Override
-  void translate(Translator translator) {
+  void translate() {
     throw new IllegalStateException("Webpage is already translated.");
   }
 }

@@ -1,6 +1,5 @@
 package com.github.webcrawler.webpage;
 
-import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.provider.DocumentProvider;
 import java.io.IOException;
 import java.util.function.Predicate;
@@ -19,7 +18,7 @@ public abstract class State {
 
   abstract void analyze();
 
-  abstract void translate(Translator translator);
+  abstract void translate();
 
   String toMarkdown() {
     String markdownMetadata = webPage.metadataToMarkdown();

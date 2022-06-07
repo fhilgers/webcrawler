@@ -38,8 +38,7 @@ public class DefaultApp implements App {
       }
 
       List<WebPage> webPages = initializeWebpages();
-      Translator translator = initializeTranslator();
-      analyzeTranslateAndWriteMarkdownReport(webPages, translator);
+      analyzeTranslateAndWriteMarkdownReport(webPages);
 
     } catch (CommandlineException ex) {
       System.err.println(ex.getMessage());
@@ -53,29 +52,31 @@ public class DefaultApp implements App {
   }
 
   private List<WebPage> initializeWebpages() {
+    Translator translator =
+        new DeepLTranslator(
+            parsedArgs.getTargetLanguage(),
+            parsedArgs.getDeeplAuthKey(),
+            parsedArgs.getDeeplIsPro());
+
     return parsedArgs.getUrls().stream()
-        .map(url -> new WebPage(url, parsedArgs.getMaxDepth(), new JsoupDocumentProvider()))
+        .map(
+            url ->
+                new WebPage(url, parsedArgs.getMaxDepth(), new JsoupDocumentProvider(), translator))
         .toList();
   }
 
-  private Translator initializeTranslator() {
-    return new DeepLTranslator(
-        parsedArgs.getTargetLanguage(), parsedArgs.getDeeplAuthKey(), parsedArgs.getDeeplIsPro());
-  }
-
-  private void analyzeTranslateAndWriteMarkdownReport(List<WebPage> webPages, Translator translator)
-      throws IOException {
-    analyzeAndTranslateWebpages(webPages, translator);
+  private void analyzeTranslateAndWriteMarkdownReport(List<WebPage> webPages) throws IOException {
+    analyzeAndTranslateWebpages(webPages);
     writeMarkdownReport(webPages);
   }
 
-  private void analyzeAndTranslateWebpages(List<WebPage> webPages, Translator translator) {
+  private void analyzeAndTranslateWebpages(List<WebPage> webPages) {
     webPages.parallelStream()
         .forEach(
             webPage -> {
               webPage.tryFetch();
               webPage.tryAnalyze();
-              webPage.tryTranslate(translator);
+              webPage.tryTranslate();
             });
   }
 

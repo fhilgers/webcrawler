@@ -1,6 +1,5 @@
 package com.github.webcrawler.webpage;
 
-import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.provider.DocumentProvider;
 import java.io.IOException;
 import java.util.function.Predicate;
@@ -25,7 +24,7 @@ public class InitializedState extends State {
   }
 
   @Override
-  void translate(Translator translator) {
+  void translate() {
     throw new IllegalStateException("Webpage has to be fetched and analyzed prior to translation.");
   }
 

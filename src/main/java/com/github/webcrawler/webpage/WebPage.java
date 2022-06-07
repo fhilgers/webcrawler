@@ -23,6 +23,7 @@ public class WebPage implements Markdownable {
   private final int depth;
 
   private final DocumentProvider provider;
+  private final Translator translator;
 
   private final List<Heading> headings = new ArrayList<>();
   private final Set<Link> links = new LinkedHashSet<>();
@@ -37,18 +38,24 @@ public class WebPage implements Markdownable {
   String sourceLanguage = "UNKNOWN";
   String targetLanguage = "UNKNOWN";
 
-  public WebPage(String url, int maxDepth, DocumentProvider provider) {
-    this(Link.fromString(url), new LinkedHashSet<>(), maxDepth, provider, 0);
+  public WebPage(String url, int maxDepth, DocumentProvider provider, Translator translator) {
+    this(Link.fromString(url), new LinkedHashSet<>(), maxDepth, provider, translator, 0);
   }
 
   public WebPage(
-      Link link, Set<Link> seenLinks, int maxDepth, DocumentProvider provider, int depth) {
+      Link link,
+      Set<Link> seenLinks,
+      int maxDepth,
+      DocumentProvider provider,
+      Translator translator,
+      int depth) {
     this.state = new InitializedState(this);
     this.link = link;
     this.seenLinks = seenLinks;
     this.seenLinks.add(link);
     this.maxDepth = maxDepth;
     this.provider = provider;
+    this.translator = translator;
     this.depth = depth;
   }
 
@@ -73,11 +80,10 @@ public class WebPage implements Markdownable {
    * Aggregates the headings of itself and its children, translates them and updates all the
    * headings.
    *
-   * @param translator The translator to use.
    * @throws TranslationException If error occurs translating.
    */
-  public void translate(Translator translator) throws TranslationException {
-    this.state.translate(translator);
+  public void translate() throws TranslationException {
+    this.state.translate();
   }
 
   public void tryFetch() {
@@ -96,9 +102,9 @@ public class WebPage implements Markdownable {
     }
   }
 
-  public void tryTranslate(Translator translator) {
+  public void tryTranslate() {
     try {
-      translate(translator);
+      translate();
     } catch (Exception e) {
       this.exceptions.add(e);
     }
@@ -127,6 +133,10 @@ public class WebPage implements Markdownable {
 
   Link getLink() {
     return link;
+  }
+
+  Translator getTranslator() {
+    return translator;
   }
 
   int getDepth() {
@@ -175,7 +185,7 @@ public class WebPage implements Markdownable {
 
     for (Link link : this.links) {
       try {
-        WebPage child = new WebPage(link, seenLinks, maxDepth, provider, depth + 1);
+        WebPage child = new WebPage(link, seenLinks, maxDepth, provider, translator, depth + 1);
         child.fetch();
         child.analyze();
         children.add(child);

@@ -25,11 +25,11 @@ public class AnalyzedState extends State {
   }
 
   @Override
-  void translate(Translator translator) {
+  void translate() {
     List<Heading> allHeadings = webPage.aggregateHeadings();
     List<String> allHeadingTexts = allHeadings.stream().map(Heading::text).toList();
 
-    Translator.Result translationResult = translator.translate(allHeadingTexts);
+    Translator.Result translationResult = webPage.getTranslator().translate(allHeadingTexts);
 
     List<String> translatedTexts = translationResult.translatedTexts();
     ArrayList<Heading> translatedHeadings =
