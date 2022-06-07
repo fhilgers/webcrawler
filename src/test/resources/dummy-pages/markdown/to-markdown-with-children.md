@@ -1,7 +1,7 @@
 input: <a>https://testpage/10-three-child-links-with-headings-and-broken.html</a>
 <br>max depth: 5
-<br>source language: null
-<br>target language: null
+<br>source language: UNKNOWN
+<br>target language: UNKNOWN
 <br>summary:
 
 #  Heading 1

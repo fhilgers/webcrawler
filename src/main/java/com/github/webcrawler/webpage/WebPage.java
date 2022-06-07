@@ -28,12 +28,14 @@ public class WebPage implements Markdownable {
   private final Set<Link> links = new LinkedHashSet<>();
 
   private final Set<Link> brokenLinks = new LinkedHashSet<>();
+  private final Set<Exception> exceptions = new LinkedHashSet<>();
+
   private final Set<WebPage> children = new LinkedHashSet<>();
 
   private State state;
   private Document document;
-  String sourceLanguage;
-  String targetLanguage;
+  String sourceLanguage = "UNKNOWN";
+  String targetLanguage = "UNKNOWN";
 
   public WebPage(String url, int maxDepth, DocumentProvider provider) {
     this(Link.fromString(url), new LinkedHashSet<>(), maxDepth, provider, 0);
@@ -76,6 +78,30 @@ public class WebPage implements Markdownable {
    */
   public void translate(Translator translator) throws TranslationException {
     this.state.translate(translator);
+  }
+
+  public void tryFetch() {
+    try {
+      fetch();
+    } catch (Exception e) {
+      this.exceptions.add(e);
+    }
+  }
+
+  public void tryAnalyze() {
+    try {
+      analyze();
+    } catch (Exception e) {
+      this.exceptions.add(e);
+    }
+  }
+
+  public void tryTranslate(Translator translator) {
+    try {
+      translate(translator);
+    } catch (Exception e) {
+      this.exceptions.add(e);
+    }
   }
 
   /**
@@ -201,5 +227,13 @@ public class WebPage implements Markdownable {
     Metadata metadata = new Metadata(link, maxDepth, sourceLanguage, targetLanguage);
 
     return metadata.toMarkdown(depth);
+  }
+
+  String exceptionsToMarkdown() {
+    if (exceptions.size() == 0) {
+      return "";
+    }
+    return "Logged Exceptions:\n"
+        + exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n"));
   }
 }

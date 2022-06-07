@@ -23,11 +23,17 @@ public abstract class State {
 
   String toMarkdown() {
     String markdownMetadata = webPage.metadataToMarkdown();
+    String markdownExceptions = webPage.exceptionsToMarkdown();
     String markdownHeaders = webPage.headingsToMarkdown();
     String markdownBrokenLinks = webPage.brokenLinksToMarkdown();
     String markdownChildren = webPage.childrenToMarkdown();
 
-    return Stream.of(markdownMetadata, markdownHeaders, markdownBrokenLinks, markdownChildren)
+    return Stream.of(
+            markdownMetadata,
+            markdownExceptions,
+            markdownHeaders,
+            markdownBrokenLinks,
+            markdownChildren)
         .filter(Predicate.not(String::isBlank))
         .collect(Collectors.joining("\n\n"));
   }

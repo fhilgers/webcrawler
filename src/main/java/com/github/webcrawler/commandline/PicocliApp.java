@@ -61,13 +61,9 @@ public class PicocliApp implements App, Callable<Integer> {
     webPages.parallelStream()
         .forEach(
             webPage -> {
-              try {
-                webPage.fetch();
-                webPage.analyze();
-                webPage.translate(translator);
-              } catch (IOException e) {
-                throw new RuntimeException(e);
-              }
+              webPage.tryFetch();
+              webPage.tryAnalyze();
+              webPage.tryTranslate(translator);
             });
   }
 
