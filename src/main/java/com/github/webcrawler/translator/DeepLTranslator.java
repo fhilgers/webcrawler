@@ -100,7 +100,7 @@ public record DeepLTranslator(
     /**
      * @param collection The collection to analyze.
      * @param <T> The type of objects in the collection.
-     * @return The object with the highest occurance.
+     * @return The object with the highest occurrence.
      */
     private static <T> T getElementWithHighestOccurrence(Collection<T> collection) {
       return collection.stream()
