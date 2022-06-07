@@ -57,8 +57,7 @@ public class PicocliApp implements App, Callable<Integer> {
     writeMarkdownReport(webPages);
   }
 
-  private void analyzeAndTranslateWebpages(List<WebPage> webPages, Translator translator)
-      throws IOException {
+  private void analyzeAndTranslateWebpages(List<WebPage> webPages, Translator translator) {
     webPages.parallelStream()
         .forEach(
             webPage -> {
