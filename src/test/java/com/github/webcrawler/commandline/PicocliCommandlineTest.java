@@ -3,13 +3,12 @@ package com.github.webcrawler.commandline;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
-public class PicocliAppTest {
+public class PicocliCommandlineTest {
 
   @Test
   public void usageMessage() {
-    CommandLine cli = new CommandLine(new PicocliApp());
+    CommandLine cli = new PicocliCommandline();
 
     String expectedUsageMessage =
         """
@@ -32,7 +31,7 @@ public class PicocliAppTest {
           -V, --version            Print version information and exit.
         """;
 
-    String usageMessage = cli.getUsageMessage();
+    String usageMessage = cli.getUsageHelp();
 
     assertEquals(expectedUsageMessage, usageMessage);
   }

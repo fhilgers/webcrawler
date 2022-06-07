@@ -1,11 +1,9 @@
 package com.github.webcrawler;
 
-import com.github.webcrawler.commandline.PicocliApp;
+import com.github.webcrawler.app.DefaultApp;
 
 public class Main {
   public static void main(String[] args) {
-
-    int exitCode = new PicocliApp().execute(args);
-    System.exit(exitCode);
+    System.exit(new DefaultApp().execute(args));
   }
 }
