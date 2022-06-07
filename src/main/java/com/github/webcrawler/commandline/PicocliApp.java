@@ -51,19 +51,27 @@ public class PicocliApp implements App, Callable<Integer> {
           "The path to the generated markdown report. Use '-' to print to console (default: ${DEFAULT-VALUE})")
   private String outputFilePath;
 
-  private void translateAndWriteMarkdownReports(List<WebPage> webPages, Translator translator)
+  private void analyzeTranslateAndWriteMarkdownReport(List<WebPage> webPages, Translator translator)
       throws IOException {
+    analyzeAndTranslateWebpages(webPages, translator);
+    writeMarkdownReport(webPages);
+  }
 
+  private void analyzeAndTranslateWebpages(List<WebPage> webPages, Translator translator)
+      throws IOException {
     webPages.parallelStream()
         .forEach(
             webPage -> {
               try {
+                webPage.analyze();
                 webPage.translate(translator);
               } catch (IOException e) {
                 throw new RuntimeException(e);
               }
             });
+  }
 
+  private void writeMarkdownReport(List<WebPage> webPages) throws IOException {
     String generatedMarkdown =
         webPages.stream().map(WebPage::toMarkdown).collect(Collectors.joining("\n\n\n"));
 
@@ -83,19 +91,10 @@ public class PicocliApp implements App, Callable<Integer> {
   public Integer call() throws IOException {
 
     List<WebPage> webPages =
-        urls.parallelStream()
-            .map(
-                url -> {
-                  try {
-                    return new WebPage(url, maxDepth, new JsoupDocumentProvider());
-                  } catch (IOException e) {
-                    throw new RuntimeException(e);
-                  }
-                })
-            .toList();
+        urls.stream().map(url -> new WebPage(url, maxDepth, new JsoupDocumentProvider())).toList();
     Translator translator = new DeepLTranslator(targetLanguage, deeplAuthKey, deeplIsPro);
 
-    translateAndWriteMarkdownReports(webPages, translator);
+    analyzeTranslateAndWriteMarkdownReport(webPages, translator);
 
     return 0;
   }
