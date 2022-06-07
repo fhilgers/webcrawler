@@ -32,17 +32,9 @@ public class InitializedState extends State {
   String toMarkdown() {
     String markdownMetadata = webPage.metadataToMarkdown();
     String markdownExceptions = webPage.exceptionsToMarkdown();
-    String markdownHeaders = "UNKNOWN";
-    String markdownBrokenLinks = "UNKNOWN";
-    String markdownChildren = "UNKNOWN";
 
-    return Stream.of(
-            markdownMetadata,
-            markdownExceptions,
-            markdownHeaders,
-            markdownBrokenLinks,
-            markdownChildren)
+    return Stream.of(markdownMetadata, "Webpage not fetched nor analyzed.", markdownExceptions)
         .filter(Predicate.not(String::isBlank))
-        .collect(Collectors.joining("\n\n"));
+        .collect(Collectors.joining("\n"));
   }
 }

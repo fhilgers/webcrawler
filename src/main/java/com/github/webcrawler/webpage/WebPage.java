@@ -163,6 +163,10 @@ public class WebPage implements Markdownable {
     this.state = state;
   }
 
+  State getState() {
+    return state;
+  }
+
   void extractHeadings() {
     this.headings.addAll(document.getHeadings());
   }

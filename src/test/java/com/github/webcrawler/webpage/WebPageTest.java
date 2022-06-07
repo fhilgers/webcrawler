@@ -3,6 +3,7 @@ package com.github.webcrawler.webpage;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.webcrawler.translator.Language;
+import com.github.webcrawler.translator.TranslationException;
 import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.component.Document;
 import com.github.webcrawler.webpage.component.JsoupDocument;
@@ -28,7 +29,7 @@ class WebPageTest {
   private static final String EXPECTED_MARKDOWN_WITHOUT_CHILDREN =
       resourceToString(MARKDOWN_DIRECTORY + "/to-markdown-without-children.md");
 
-  private static class JsoupLocalDocumentProvider implements DocumentProvider {
+  static class JsoupLocalDocumentProvider implements DocumentProvider {
 
     @Override
     public Document getDocument(String location) throws IOException {
@@ -40,13 +41,29 @@ class WebPageTest {
     }
   }
 
-  private static class DummyTranslator implements Translator {
+  static class InvalidDocumentProvider implements DocumentProvider {
+
+    @Override
+    public Document getDocument(String location) throws IOException {
+      throw new IOException("document could not be fetched");
+    }
+  }
+
+  static class DummyTranslator implements Translator {
 
     @Override
     public Result translate(List<String> texts) {
       List<String> translatedTexts =
           texts.stream().map(text -> "This text was translated.").toList();
       return new Result(Language.ENGLISH, Language.ENGLISH, translatedTexts);
+    }
+  }
+
+  static class InvalidTranslator implements Translator {
+
+    @Override
+    public Result translate(List<String> texts) throws TranslationException {
+      throw new TranslationException("texts could not be translated");
     }
   }
 

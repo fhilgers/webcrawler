@@ -29,10 +29,10 @@ public abstract class State {
 
     return Stream.of(
             markdownMetadata,
-            markdownExceptions,
             markdownHeaders,
             markdownBrokenLinks,
-            markdownChildren)
+            markdownChildren,
+            markdownExceptions)
         .filter(Predicate.not(String::isBlank))
         .collect(Collectors.joining("\n\n"));
   }
