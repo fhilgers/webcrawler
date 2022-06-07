@@ -13,5 +13,5 @@ public abstract class State {
 
   abstract void analyze() throws IOException;
 
-  abstract void translate(Translator translator) throws IOException;
+  abstract void translate(Translator translator);
 }

@@ -183,20 +183,71 @@ public record DeepLTranslator(
     return new Request.Builder().url(apiUrl).post(body).build();
   }
 
-  private ResponseBody doRequest(List<String> texts) throws IOException {
-    RequestBody requestBody = buildRequestBody(texts);
-    Request request = buildRequest(requestBody);
-    Response response = client.newCall(request).execute();
+  private enum Error {
+    BAD_REQUEST,
+    AUTHORIZATION_FAILED,
+    RESOURCE_NOT_FOUND,
+    REQUEST_SIZE_EXCEEDS_LIMIT,
+    REQUEST_URL_TOO_LONG,
+    TOO_MANY_REQUESTS,
+    QUOTA_EXCEEDED,
+    RESOURCE_UNAVAILABLE,
+    INTERNAL_ERROR;
 
-    if (response.code() == 403) {
-      throw new IOException("forbidden: invalid auth_key");
+    static Error fromCode(int code) {
+      return switch (code) {
+        case 400 -> BAD_REQUEST;
+        case 403 -> AUTHORIZATION_FAILED;
+        case 404 -> RESOURCE_NOT_FOUND;
+        case 413 -> REQUEST_SIZE_EXCEEDS_LIMIT;
+        case 414 -> REQUEST_URL_TOO_LONG;
+        case 429, 529 -> TOO_MANY_REQUESTS;
+        case 456 -> QUOTA_EXCEEDED;
+        case 503 -> RESOURCE_UNAVAILABLE;
+        default -> INTERNAL_ERROR;
+      };
     }
 
-    return response.body();
+    @Override
+    public String toString() {
+      return switch (this) {
+        case BAD_REQUEST -> "Bad request. Please check error message and your parameters.";
+        case AUTHORIZATION_FAILED -> "Authorization failed. Please supply a valid auth_key parameter.";
+        case RESOURCE_NOT_FOUND -> "The requested resource could not be found.";
+        case REQUEST_SIZE_EXCEEDS_LIMIT -> "The request size exceeds the limit.";
+        case REQUEST_URL_TOO_LONG -> "The request URL is too long. You can avoid this error by using a POST request instead of a GET request, and sending the parameters in the HTTP body.";
+        case TOO_MANY_REQUESTS -> "Too many requests. Please wait and resend your request.";
+        case QUOTA_EXCEEDED -> "Quota exceeded. The character limit has been reached.";
+        case RESOURCE_UNAVAILABLE -> "Resource currently unavailable. Try again later.";
+        case INTERNAL_ERROR -> "Internal error";
+      };
+    }
   }
 
-  private JsonTranslations extractTranslationResults(ResponseBody body) throws IOException {
-    return JsonTranslations.fromJsonString(body.string());
+  private ResponseBody doRequest(List<String> texts) throws TranslationException {
+    RequestBody requestBody = buildRequestBody(texts);
+    Request request = buildRequest(requestBody);
+
+    try {
+      Response response = client.newCall(request).execute();
+      if (!response.isSuccessful()) {
+        throw new TranslationException(Error.fromCode(response.code()).toString());
+      }
+
+      return response.body();
+    } catch (IOException e) {
+      throw new TranslationException(e);
+    }
+  }
+
+  private JsonTranslations extractTranslationResults(ResponseBody body)
+      throws TranslationException {
+    try {
+      String bodyString = body.string();
+      return JsonTranslations.fromJsonString(bodyString);
+    } catch (IOException e) {
+      throw new TranslationException(e);
+    }
   }
 
   /**
@@ -207,7 +258,7 @@ public record DeepLTranslator(
    * @throws IOException If errors occur on DeepL api requests.
    */
   @Override
-  public Result translate(List<String> texts) throws IOException {
+  public Result translate(List<String> texts) throws TranslationException {
     if (texts == null || texts.size() == 0)
       return new Result(targetLanguage, targetLanguage, new ArrayList<>());
 

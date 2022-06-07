@@ -1,6 +1,5 @@
 package com.github.webcrawler.translator;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface Translator {
@@ -17,7 +16,7 @@ public interface Translator {
    *
    * @param texts The texts to translate.
    * @return The Result containing source language, target language and the translations.
-   * @throws IOException If errors occur on api requests.
+   * @throws TranslationException If errors occur on translation.
    */
-  Result translate(List<String> texts) throws IOException;
+  Result translate(List<String> texts) throws TranslationException;
 }

@@ -1,5 +1,6 @@
 package com.github.webcrawler.webpage;
 
+import com.github.webcrawler.translator.TranslationException;
 import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.component.*;
 import com.github.webcrawler.webpage.provider.*;
@@ -64,9 +65,9 @@ public class WebPage implements Markdownable {
    * headings.
    *
    * @param translator The translator to use.
-   * @throws IOException If error occurs translating.
+   * @throws TranslationException If error occurs translating.
    */
-  public void translate(Translator translator) throws IOException {
+  public void translate(Translator translator) throws TranslationException {
     this.state.translate(translator);
   }
 

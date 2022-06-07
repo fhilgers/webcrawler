@@ -2,7 +2,6 @@ package com.github.webcrawler.webpage;
 
 import com.github.webcrawler.translator.Translator;
 import com.github.webcrawler.webpage.component.Heading;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ public class AnalyzedState extends State {
   }
 
   @Override
-  void translate(Translator translator) throws IOException {
+  void translate(Translator translator) {
     List<Heading> allHeadings = webPage.aggregateHeadings();
     List<String> allHeadingTexts = allHeadings.stream().map(Heading::text).toList();
 
