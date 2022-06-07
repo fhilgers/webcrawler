@@ -13,8 +13,8 @@ See `gradle tasks` for a list of available tasks. Most notably:
 
 ```
 Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
-               [-o=<outputFilePath>] URL
-      URL                  The URL for the webpage to crawl
+               [-o=<outputFilePath>] URLS...
+      URLS...              The URL for the webpage to crawl
   -d, --depth=<maxDepth>   The depth of webpages to crawl recursively (default:
                              2)
   -h, --help               Show this help message and exit.
@@ -31,7 +31,7 @@ Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
   -V, --version            Print version information and exit.
 ```
 
-# Required Features
+# Required Features 01
 
 - Accept URL, depth of websites to crawl and target language as command line argument
 - Provide overview of a website by listing headings and links in the specified target language
@@ -43,3 +43,9 @@ Usage: crawler [-hpV] [-d=<maxDepth>] -k=<deeplAuthKey> [-l=<targetLanguage>]
 
 - Recursively analyze links up to a certain depth
 - Save the generated overview in a single file
+
+# Required Features 02
+
+- Concurrent crawling and translation of multiple websites
+- Proper error handling and logging inside the created report
+- Decoupling from third party libraries
