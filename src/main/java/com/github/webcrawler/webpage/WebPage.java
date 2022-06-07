@@ -54,7 +54,8 @@ public class WebPage implements Markdownable {
    * Fetches the Website and then extracts the headings and the links present. Then recursively
    * visit the links up to the depth configured in the WebPage object and analyze them as well.
    *
-   * @throws IOException If an error occurs, fetching the website or any of the children.
+   * @throws IOException If an error occurs fetching the website itself, children which could not be
+   *     fetched are recorded as broken link.
    */
   public void analyze() throws IOException {
     this.state.analyze();
